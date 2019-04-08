@@ -8,6 +8,26 @@
  *
  * @author Matthias
  */
-public class Konto {
+public class Konto{
+
+    private int balance;
+
+    public Konto(int balance) {
+        this.balance = balance;
+    }
+    
+    public synchronized int withdraw(int amount)throws Exception{
+        if(balance-amount>=0){
+            balance-=amount;
+            return balance;
+        }
+        else
+            throw new Exception("Nicht genug Geld auf dem Konto!");
+    }
+    
+    public synchronized int deposit(int amount){
+        balance += amount;
+        return balance;
+    }
     
 }
