@@ -26,15 +26,22 @@ public class KontoBenutzer implements Runnable{
 
     @Override
     public void run() {
+        
         konto = gui.getCurrent();
         Random randy = new Random();
         int amount;
-        for(int i=0;i<10;i++){
-            synchronized(konto){
+        synchronized(konto){
+            for(int i=0;i<10;i++){
+            
                 if(i%2==0){
                     amount = randy.nextInt(50-10+1)+10;
-                    if(konto.getBalance()<amount)
+                    if(konto.getBalance()>amount){
                         konto.withdraw(amount);
+                        gui.setBalance(konto.getBalance());
+                        gui.addLog(name+" has withdrawn "+amount);
+                        gui.repaint();
+                        konto.notifyAll();
+                    }
                     else
                         try {
                             konto.wait();
@@ -45,9 +52,24 @@ public class KontoBenutzer implements Runnable{
                 else{
                     amount = randy.nextInt(50-10+1)+10;
                     konto.deposit(amount);
+                    gui.setBalance(konto.getBalance());
+                    gui.addLog(name+" has deposited "+amount);
+                    gui.repaint();
+                    konto.notifyAll();
+                }
+                //int waitTime = randy.nextInt(1000-1+1)+1;
+                try {
+                    Thread.sleep(500);
+                } catch (InterruptedException ex) {
+                    Logger.getLogger(KontoBenutzer.class.getName()).log(Level.SEVERE, null, ex);
                 }
             }
         }
+    }
+    
+    @Override
+    public String toString(){
+        return name;
     }
     
 }

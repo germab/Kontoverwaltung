@@ -1,3 +1,10 @@
+
+import java.util.ArrayList;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javax.swing.DefaultListModel;
+import javax.swing.JOptionPane;
+
 /*
  * To change this license header, choose License Headers in Project Properties.
  * To change this template file, choose Tools | Templates
@@ -10,19 +17,29 @@
  */
 public class KontoGUI extends javax.swing.JFrame {
 
-    
+    private ArrayList<Thread> threads = new ArrayList();
+    private DefaultListModel model = new DefaultListModel();
     private Konto current;
     /**
      * Creates new form KontoGUI
      */
     public KontoGUI() {
         initComponents();
+        liBenutzer.setModel(model);
         current = new Konto(100);
         kontostand.setText(""+current.getBalance());
     }
 
     public Konto getCurrent(){
         return current;
+    }
+    
+    public void setBalance(int amount){
+        kontostand.setText(""+amount);
+    }
+    
+    public void addLog(String text){
+        taLog.append(text+"\n");
     }
     
     /**
@@ -34,11 +51,30 @@ public class KontoGUI extends javax.swing.JFrame {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
+        menuUser = new javax.swing.JPopupMenu();
+        miAddUser = new javax.swing.JMenuItem();
+        miTest = new javax.swing.JMenuItem();
         jScrollPane1 = new javax.swing.JScrollPane();
         liBenutzer = new javax.swing.JList<>();
         jScrollPane2 = new javax.swing.JScrollPane();
         taLog = new javax.swing.JTextArea();
         kontostand = new javax.swing.JLabel();
+
+        miAddUser.setText("add User");
+        miAddUser.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                miAddUserActionPerformed(evt);
+            }
+        });
+        menuUser.add(miAddUser);
+
+        miTest.setText("perform Account test");
+        miTest.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                miTestActionPerformed(evt);
+            }
+        });
+        menuUser.add(miTest);
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -48,6 +84,7 @@ public class KontoGUI extends javax.swing.JFrame {
             public int getSize() { return strings.length; }
             public String getElementAt(int i) { return strings[i]; }
         });
+        liBenutzer.setComponentPopupMenu(menuUser);
         jScrollPane1.setViewportView(liBenutzer);
 
         taLog.setEditable(false);
@@ -89,6 +126,24 @@ public class KontoGUI extends javax.swing.JFrame {
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
+    private void miTestActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_miTestActionPerformed
+        for (Thread thread : threads) {
+            thread.start();
+            try {
+                thread.join();
+            } catch (InterruptedException ex) {
+                Logger.getLogger(KontoGUI.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
+    }//GEN-LAST:event_miTestActionPerformed
+
+    private void miAddUserActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_miAddUserActionPerformed
+        String name = JOptionPane.showInputDialog(this, "Name des Benutzers eingeben:");
+        KontoBenutzer kb = new KontoBenutzer(name, this);
+        model.addElement(kb);
+        threads.add(new Thread(kb));
+    }//GEN-LAST:event_miAddUserActionPerformed
+
     /**
      * @param args the command line arguments
      */
@@ -129,6 +184,9 @@ public class KontoGUI extends javax.swing.JFrame {
     private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JLabel kontostand;
     private javax.swing.JList<String> liBenutzer;
+    private javax.swing.JPopupMenu menuUser;
+    private javax.swing.JMenuItem miAddUser;
+    private javax.swing.JMenuItem miTest;
     private javax.swing.JTextArea taLog;
     // End of variables declaration//GEN-END:variables
 }
