@@ -36,18 +36,23 @@ public class KontoBenutzer implements Runnable{
                 if(i%2==0){
                     amount = randy.nextInt(50-10+1)+10;
                     if(konto.getBalance()>amount){
-                        konto.withdraw(amount);
-                        gui.setBalance(konto.getBalance());
-                        gui.addLog(name+" has withdrawn "+amount);
-                        gui.repaint();
-                        konto.notifyAll();
-                    }
-                    else
                         try {
-                            konto.wait();
-                        } catch (InterruptedException ex) {
-                            Logger.getLogger(KontoBenutzer.class.getName()).log(Level.SEVERE, null, ex);
+                            konto.withdraw(amount);
+                            gui.setBalance(konto.getBalance());
+                            gui.addLog(name+" has withdrawn "+amount);
+                            gui.repaint();
+                            konto.notifyAll();
+                        } catch (NotEnoughMoneyException ex) {
+                            try {
+                                konto.wait();
+                            } catch (InterruptedException ex1) {
+                                Logger.getLogger(KontoBenutzer.class.getName()).log(Level.SEVERE, null, ex1);
+                            }
+                            
                         }
+                        
+                    }
+                    
                 }
                 else{
                     amount = randy.nextInt(50-10+1)+10;
@@ -57,13 +62,14 @@ public class KontoBenutzer implements Runnable{
                     gui.repaint();
                     konto.notifyAll();
                 }
-                //int waitTime = randy.nextInt(1000-1+1)+1;
+                int waitTime = randy.nextInt(1000-1+1)+1;
                 try {
-                    Thread.sleep(500);
+                    Thread.sleep(waitTime);
                 } catch (InterruptedException ex) {
                     Logger.getLogger(KontoBenutzer.class.getName()).log(Level.SEVERE, null, ex);
                 }
             }
+            gui.addLog(name+" has finished");
         }
     }
     

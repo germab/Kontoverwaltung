@@ -35,7 +35,7 @@ public class KontoGUI extends javax.swing.JFrame {
     }
     
     public void setBalance(int amount){
-        kontostand.setText(""+amount);
+        kontostand.setText(amount+" Euro");
     }
     
     public void addLog(String text){

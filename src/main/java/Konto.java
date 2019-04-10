@@ -16,8 +16,11 @@ public class Konto{
         this.balance = balance;
     }
     
-    public synchronized void withdraw(int amount){
-        balance-=amount;
+    public synchronized void withdraw(int amount)throws NotEnoughMoneyException{
+        if(balance>=amount)
+            balance-=amount;
+        else
+            throw new NotEnoughMoneyException();
     }
     
     public synchronized void deposit(int amount){
